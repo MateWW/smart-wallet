@@ -1,0 +1,19 @@
+input Register {
+    email: String!
+    password: String!
+    firstName: String!
+    lastName: String!
+}
+
+input SignIn {
+    email: String!
+    password: String!
+}
+
+type Query {
+    signIn(credentials: SignIn): String
+}
+
+type Mutation {
+    register(data: Register): String
+}

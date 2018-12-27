@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  backend:
+    container_name: wallet-backend
+    restart: always
+    build: 
+      context: .
+      dockerfile: ./backend/Dockerfile
+
+  postgre:
+    container_name: wallet-database
+    restart: always
+    env_file:
+      - database/.env
+    build: ./database
+    volumes:
+      - ./database/data:/var/lib/postgresql
+
+
+  nginx:
+    container_name: wallet-nginx
+    restart: always
+    build:
+      context: ./nginx
+    ports:
+      - 8000:80
+    depends_on:
+      - backend
+

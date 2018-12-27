@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  backend:
+    command: 'bash -c "yarn && yarn start:debug"'
+    # command: "bash ./wait-for-it.sh wallet-database:5432 -- bash ./run.sh"
+    volumes:
+      - ./backend:/backend
+    ports:
+      - 9229:9229
+      
+  nginx:
+    build:
+      context: ./nginx
+      args:
+        NGINX_CONFIG: smart-wallet.dev.conf
