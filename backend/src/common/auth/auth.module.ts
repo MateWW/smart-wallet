@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 
-import { UserModule } from 'features/user/user.module';
 import { jwtSecret } from 'env';
+import { UserModule } from 'features/user/user.module';
 
-import { AuthService } from './service/auth.service';
 import { GqlAuthGuard } from './guard/gqlAuth.guard';
-import { JwtStrategy } from './service/jwt.strategy';
 import { AuthResolver } from './resolvers/auth.resolver';
-import { RegisterPipe } from './validator/register.validator';
+import { AuthService } from './service/auth.service';
+import { JwtStrategy } from './service/jwt.strategy';
+import { RegisterValidationPipe } from './validator/register.validator';
+import { SignInValidatorPipe } from './validator/signIn.validator';
 
 @Module({
     imports: [
@@ -23,6 +24,6 @@ import { RegisterPipe } from './validator/register.validator';
         UserModule,
     ],
     controllers: [],
-    providers: [AuthResolver, AuthService, JwtStrategy, GqlAuthGuard, RegisterPipe],
+    providers: [AuthResolver, AuthService, JwtStrategy, GqlAuthGuard, RegisterValidationPipe, SignInValidatorPipe],
 })
 export class AuthModule {}

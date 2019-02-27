@@ -1,0 +1,32 @@
+type Product {
+    id: String!
+    user: User
+    name: String
+    price: Float
+    company: Company
+}
+
+input AddProductInput {
+    name: String!
+    price: Float!
+    company: String
+}
+
+type ProductsAmount {
+    id: String!
+    amount: Int
+    product: Product
+}
+
+type ProductsAmountInput {
+    amount: Int!
+    product: AddProductInput!
+}
+
+type Query {
+    getProducts: [Product]
+}
+
+type Mutation {
+    addProduct(product: AddProductInput!): Product
+}

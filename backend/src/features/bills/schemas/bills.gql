@@ -1,0 +1,29 @@
+
+type Bill {
+    id: String!
+    user: User
+    company: Company
+    type: ChoiceField
+    totalPrice: Int
+    products: [ProductsAmount]
+    date: Date
+    photoUrl: String
+    createAt: Date
+    updatedAt: Date
+}
+
+input BillInput {
+    type: Int!
+    totalPrice: Float!
+    products: [ProductsAmountInput]!
+    date: Date!
+}
+
+type Query {
+    getBillsList: [Bill]
+    getBillTypes: [ChoiceField]
+}
+
+type Mutation {
+    createBill(bill: BillInput!): Bill
+}

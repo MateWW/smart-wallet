@@ -1,24 +1,25 @@
 import { UsePipes } from '@nestjs/common';
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { Register } from 'graphqlDefs';
+import { RegisterData, SignInData } from 'graphqlDefs';
 
 import { AuthService } from '../service/auth.service';
-import { RegisterPipe } from '../validator/register.validator';
+import { RegisterValidationPipe } from '../validator/register.validator';
+import { SignInValidatorPipe } from '../validator/signIn.validator';
 
 @Resolver('SignIn')
 export class AuthResolver {
     constructor(private authService: AuthService) {}
 
+    @UsePipes(new SignInValidatorPipe())
     @Query('signIn')
-    public signIn(): Promise<string> {
-        const item = this.authService.signIn();
-        return item;
+    public signIn(@Args() credentials: SignInData): Promise<string> {
+        return this.authService.signIn(credentials);
     }
 
-    @UsePipes(new RegisterPipe())
+    @UsePipes(new RegisterValidationPipe())
     @Mutation('register')
-    public register(@Args() credentials: Register): Promise<string> {
+    public register(@Args() credentials: RegisterData): Promise<string> {
         return this.authService.register(credentials);
     }
 }

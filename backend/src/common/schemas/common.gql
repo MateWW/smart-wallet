@@ -1,0 +1,4 @@
+type ChoiceField {
+    id: Int!
+    name: String!
+}

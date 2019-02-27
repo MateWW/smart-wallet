@@ -1,27 +1,24 @@
-import { Resolver, Mutation, Args, Query, Context, Root, Parent, Info } from '@nestjs/graphql';
+import { Resolver, Args, Query } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 
-import { Register } from 'graphqlDefs';
+import { User } from 'graphqlDefs';
 import { GqlAuthGuard } from 'common/auth/guard/gqlAuth.guard';
-import { initialUser } from 'common/auth/models/JwtPayload';
+import { NotFound } from 'common/errorHandler/models/common.errors';
 
 import { UserService } from '../service/user.service';
+import { UserEntity, deserializeUser } from '../entities/user.entity';
 
 @Resolver('User')
 export class UserResolver {
-
-    constructor(private service: UserService){}
+    constructor(private service: UserService) {}
 
     @UseGuards(GqlAuthGuard)
     @Query('getUser')
-    public getUser(@Args() item: any){
-        return initialUser;
+    public async getUser(@Args() { id }: any): Promise<User> {
+        const user = await UserEntity.findOne({ id });
+        if (!user) {
+            throw new NotFound(`The user doesn't exists`);
+        }
+        return deserializeUser(user);
     }
-
-    @Mutation('register')
-    public async register(@Args('data') value: Register){
-        console.log(value);
-        return await this.service.register(value);
-    }
-
 }

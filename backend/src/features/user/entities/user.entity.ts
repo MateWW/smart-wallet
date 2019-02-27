@@ -1,4 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { pick } from 'lodash';
+import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+
+import { User } from 'graphqlDefs';
 
 import { UserRole } from '../enum/userRole.enum';
 
@@ -7,7 +10,7 @@ export class UserEntity extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     public id: string;
 
-    @Column()
+    @Column({ unique: true })
     public email: string;
 
     @Column()
@@ -29,4 +32,11 @@ export class UserEntity extends BaseEntity {
 
     @UpdateDateColumn()
     public updatedAt: Date;
+}
+
+export function deserializeUser(entity: UserEntity): User | null {
+    if (!entity) {
+        return null;
+    }
+    return pick(entity, ['id', 'email', 'firstName', 'lastName', 'role']);
 }

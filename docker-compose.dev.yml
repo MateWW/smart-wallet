@@ -2,13 +2,16 @@ version: '3.7'
 
 services:
   backend:
-    command: 'bash -c "yarn && yarn start:debug"'
-    # command: "bash ./wait-for-it.sh wallet-database:5432 -- bash ./run.sh"
+    command: 'bash -c "./wait-for-it.sh wallet-database:5432 && yarn && yarn start:debug"'
     volumes:
-      - ./backend:/backend
+      - ./backend:/backend:delegated
     ports:
       - 9229:9229
-      
+
+  postgre:
+    ports:
+      - 5432:5432
+
   nginx:
     build:
       context: ./nginx

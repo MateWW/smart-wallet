@@ -1,19 +1,19 @@
-input Register {
+input RegisterData {
     email: String!
     password: String!
     firstName: String!
     lastName: String!
 }
 
-input SignIn {
+input SignInData {
     email: String!
     password: String!
 }
 
 type Query {
-    signIn(credentials: SignIn): String
+    signIn(credentials: SignInData): String
 }
 
 type Mutation {
-    register(data: Register): String
+    register(data: RegisterData): String
 }

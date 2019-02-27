@@ -3,11 +3,16 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 
-import { UserModule } from './features/user/user.module';
+import { handleError } from 'common/errorHandler/index';
+import { AuthModule } from 'common/auth/auth.module';
+import { ScalarsModule } from 'common/scalars/scalars.module';
+
+import { UserModule } from 'features/user/user.module';
+import { CompaniesModule } from 'features/companies/companies.module';
+
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './common/auth/auth.module';
-import { handleError } from './common/errorHandler/index';
+import { BillsModule } from './features/bills/bills.module';
+import { ProductsModule } from './features/products/products.module';
 
 @Module({
     imports: [
@@ -22,8 +27,8 @@ import { handleError } from './common/errorHandler/index';
             synchronize: true,
         }),
         GraphQLModule.forRoot({
-            context: ({ req }) => ({ req }),
-            typePaths: ['./src/**/*.graphql'],
+            context: ({ req }: any) => ({ req }),
+            typePaths: ['./src/**/*.gql'],
             definitions: {
                 path: join(process.cwd(), 'src/graphqlDefs.ts'),
                 outputAs: 'interface',
@@ -33,8 +38,11 @@ import { handleError } from './common/errorHandler/index';
         }),
         UserModule,
         AuthModule,
+        BillsModule,
+        ProductsModule,
+        CompaniesModule,
+        ScalarsModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
 })
 export class AppModule {}

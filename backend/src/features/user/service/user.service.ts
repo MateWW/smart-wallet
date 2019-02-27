@@ -1,27 +1,40 @@
-
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
-import { User, Register } from 'graphqlDefs';
+import { User } from 'graphqlDefs';
 
-import { initialUser } from 'common/auth/models/JwtPayload';
-import { UserEntity } from '../entities/user.entity';
-import { serializeRegisterForm } from '../serializer/registerForm.serializer';
+import { deserializeUser, UserEntity } from '../entities/user.entity';
 
 @Injectable()
 export class UserService {
+    constructor(@InjectRepository(UserEntity) private readonly userModel: Repository<UserEntity>) {}
 
-    constructor(@InjectRepository(UserEntity) private readonly userModel: Repository<UserEntity>){}
-
-    public register(registerData: Register): Promise<UserEntity> {
-        return this.userModel.create(serializeRegisterForm(registerData)).save();
+    public async createUser(userData: Partial<UserEntity>): Promise<User | null> {
+        const user = await this.userModel.create(userData).save();
+        return this.mapIfExists(user);
     }
 
-    public checkCredentials({email}: Partial<User>): Promise<User> {
-        console.log('check validate');
-        return Promise.resolve(email === initialUser.email ? initialUser : null);
-        // return UserModel.findOne({email});
+    public async isUserExist({ email }: User): Promise<boolean> {
+        const userEntity = await this.getUserByEmail(email);
+        return !!userEntity;
+    }
+
+    public getFullUser(email: string): Promise<UserEntity | null> {
+        return this.userModel.findOne({ email });
+    }
+
+    public async getUserByEmail(email: string): Promise<User | null> {
+        const user = await this.userModel.findOne({ email });
+        return this.mapIfExists(user);
+    }
+
+    public async getUserById(id: string): Promise<User | null> {
+        const user = await this.userModel.findOne({ id });
+        return this.mapIfExists(user);
+    }
+
+    private mapIfExists(user: UserEntity): User | null {
+        return user ? deserializeUser(user) : null;
     }
 }
